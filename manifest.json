@@ -1,0 +1,19 @@
+{
+  "name": "Claw.Toys — Free Online Claw Machine Arcade",
+  "short_name": "Claw.Toys",
+  "description": "Free online claw machine arcade. Grab teddy bears, robots, dolls, cars and plushies. No downloads, no fees.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0a0f",
+  "theme_color": "#FF6B6B",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧸</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
