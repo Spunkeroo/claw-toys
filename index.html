@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#FF6B6B">
+<meta name="description" content="Free online claw machine arcade! Grab teddy bears, robots, dolls, cars and plushies in our virtual claw game. No downloads, no fees — play instantly in your browser.">
+<meta name="keywords" content="claw machine, online claw game, free arcade, toy grabber, virtual claw machine, prize grabber, claw toys">
+<meta name="author" content="Claw.Toys">
+<meta name="robots" content="index, follow">
+<meta property="og:title" content="Claw.Toys — Free Online Claw Machine Arcade">
+<meta property="og:description" content="Grab teddy bears, robots, dolls & more in our free virtual claw machine! Play instantly, no downloads.">
+<meta property="og:url" content="https://claw.toys/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Claw.Toys">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Claw.Toys — Free Online Claw Machine Arcade">
+<meta name="twitter:description" content="Grab teddy bears, robots, dolls & more in our free virtual claw machine!">
+<title>Claw.Toys — Free Online Claw Machine Arcade</title>
+<link rel="canonical" href="https://claw.toys/">
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧸</text></svg>">
+<style>
+/* ===== CSS VARIABLES ===== */
+:root {
+    --primary: #FF6B6B;
+    --secondary: #4ECDC4;
+    --bg: #0a0a0f;
+    --surface: #1a1a2e;
+    --surface2: #16213e;
+    --accent: #FFE66D;
+    --text: #f0f0f0;
+    --text-dim: #999;
+    --radius: 12px;
+    --glow-primary: 0 0 20px rgba(255, 107, 107, 0.3);
+    --glow-secondary: 0 0 20px rgba(78, 205, 196, 0.3);
+    --glow-accent: 0 0 20px rgba(255, 230, 109, 0.3);
+    --transition: 0.3s ease;
+}
+
+/* ===== RESET ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+}
+a { color: var(--secondary); text-decoration: none; transition: color var(--transition); }
+a:hover { color: var(--primary); }
+img { max-width: 100%; display: block; }
+button { cursor: pointer; border: none; font-family: inherit; }
+ul { list-style: none; }
+
+/* ===== LOADING SCREEN ===== */
+#loading-screen {
+    position: fixed; inset: 0; z-index: 10000;
+    background: var(--bg);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    transition: opacity 0.5s ease;
+}
+#loading-screen.hidden { opacity: 0; pointer-events: none; }
+#loading-screen .loader-icon { font-size: 4rem; margin-bottom: 1.5rem; animation: bounce 1s infinite; }
+#loading-screen h2 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary); }
+.progress-bar-container {
+    width: 280px; height: 8px;
+    background: var(--surface); border-radius: 4px; overflow: hidden;
+}
+.progress-bar-fill {
+    height: 100%; width: 0%; border-radius: 4px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    transition: width 0.3s ease;
+}
+#loading-screen .load-text { margin-top: 0.75rem; font-size: 0.85rem; color: var(--text-dim); }
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+/* ===== NETWORK BAR ===== */
+.network-bar {
+    background: rgba(10, 10, 15, 0.95);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding: 0; overflow-x: auto; white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+.network-bar::-webkit-scrollbar { display: none; }
+.network-bar-inner {
+    display: flex; align-items: center; gap: 0;
+    max-width: 1400px; margin: 0 auto; padding: 0 1rem;
+    font-size: 0.75rem;
+}
+.nb-group {
+    display: flex; align-items: center; gap: 0;
+    padding: 0 0.5rem;
+    border-right: 1px solid rgba(255,255,255,0.06);
+}
+.nb-group:last-child { border-right: none; }
+.nb-label {
+    color: var(--text-dim); font-weight: 700; font-size: 0.65rem;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    padding: 0.5rem 0.5rem 0.5rem 0; white-space: nowrap;
+}
+.nb-link {
+    color: var(--text-dim); padding: 0.5rem 0.4rem;
+    transition: color var(--transition); white-space: nowrap;
+}
+.nb-link:hover { color: var(--primary); }
+.nb-link.active { color: var(--primary); font-weight: 700; }
+
+/* ===== HEADER ===== */
+.site-header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10, 10, 15, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding: 0.75rem 1.5rem;
+}
+.header-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+}
+.logo { display: flex; align-items: center; gap: 0.5rem; font-size: 1.5rem; font-weight: 800; color: var(--text); }
+.logo .emoji { font-size: 1.8rem; }
+.logo span { color: var(--primary); }
+.header-right { display: flex; align-items: center; gap: 1rem; }
+.credits-display {
+    display: flex; align-items: center; gap: 0.4rem;
+    background: var(--surface); padding: 0.4rem 0.8rem;
+    border-radius: 20px; font-weight: 700; font-size: 0.9rem;
+    border: 1px solid rgba(255, 230, 109, 0.3);
+}
+.credits-display .coin { font-size: 1.1rem; }
+.credits-display .count { color: var(--accent); }
+.sound-toggle {
+    background: var(--surface); border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text); padding: 0.4rem 0.6rem;
+    border-radius: 8px; font-size: 1rem; transition: all var(--transition);
+}
+.sound-toggle:hover { border-color: var(--primary); }
+
+/* ===== HERO ===== */
+.hero {
+    text-align: center; padding: 4rem 1.5rem 3rem;
+    background: radial-gradient(ellipse at center top, rgba(255,107,107,0.08) 0%, transparent 70%);
+}
+.hero h1 {
+    font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900;
+    line-height: 1.1; margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--primary), var(--accent), var(--secondary));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.hero p { font-size: 1.2rem; color: var(--text-dim); max-width: 600px; margin: 0 auto 2rem; }
+.btn-primary {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: linear-gradient(135deg, var(--primary), #ff8e8e);
+    color: #fff; font-size: 1.1rem; font-weight: 700;
+    padding: 0.9rem 2.5rem; border-radius: 50px;
+    box-shadow: var(--glow-primary);
+    transition: all var(--transition); border: none;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(255,107,107,0.5); color: #fff; }
+.btn-secondary {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: transparent; color: var(--secondary);
+    font-size: 1rem; font-weight: 600;
+    padding: 0.7rem 1.8rem; border-radius: 50px;
+    border: 2px solid var(--secondary);
+    transition: all var(--transition);
+}
+.btn-secondary:hover { background: var(--secondary); color: var(--bg); }
+
+/* ===== SECTION COMMON ===== */
+.section { padding: 4rem 1.5rem; max-width: 1200px; margin: 0 auto; }
+.section-title {
+    text-align: center; font-size: 2rem; font-weight: 800;
+    margin-bottom: 0.5rem;
+}
+.section-title .highlight { color: var(--primary); }
+.section-sub { text-align: center; color: var(--text-dim); margin-bottom: 3rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+
+/* ===== CLAW MACHINE GAME ===== */
+.game-section { padding: 2rem 1.5rem 4rem; }
+.game-container {
+    max-width: 600px; margin: 0 auto;
+    background: var(--surface);
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 2px solid rgba(255,107,107,0.2);
+    box-shadow: 0 0 40px rgba(255,107,107,0.1);
+}
+.game-top-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0.75rem 1rem;
+    background: var(--surface2);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 0.85rem;
+}
+.game-top-bar .game-credits { color: var(--accent); font-weight: 700; }
+.game-top-bar .game-status { color: var(--secondary); }
+.game-top-bar .game-wins { color: var(--primary); font-weight: 700; }
+
+/* CLAW AREA */
+.claw-area {
+    position: relative;
+    width: 100%; height: 420px;
+    background: linear-gradient(180deg, #0d0d1a 0%, #12122a 50%, #1a1a3e 100%);
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+}
+/* Glass walls */
+.claw-area::before, .claw-area::after {
+    content: ''; position: absolute; top: 0; bottom: 0; width: 4px;
+    background: linear-gradient(180deg, rgba(78,205,196,0.4), rgba(78,205,196,0.1));
+    z-index: 5;
+}
+.claw-area::before { left: 0; }
+.claw-area::after { right: 0; }
+
+/* Rail */
+.claw-rail {
+    position: absolute; top: 0; left: 0; right: 0; height: 12px;
+    background: linear-gradient(180deg, #333, #222);
+    border-bottom: 2px solid #444;
+    z-index: 10;
+}
+
+/* Claw assembly */
+.claw-assembly {
+    position: absolute; top: 12px; z-index: 10;
+    display: flex; flex-direction: column; align-items: center;
+    transition: left 0.15s ease-out;
+    will-change: left, top;
+}
+.claw-rope {
+    width: 3px; height: 20px;
+    background: repeating-linear-gradient(180deg, #888, #888 4px, #666 4px, #666 8px);
+    transition: height 0.5s ease;
+}
+.claw-head {
+    position: relative; width: 50px; height: 30px;
+}
+.claw-arm {
+    position: absolute; bottom: 0;
+    width: 4px; height: 22px;
+    background: linear-gradient(180deg, #ccc, #999);
+    border-radius: 0 0 3px 3px;
+    transform-origin: top center;
+    transition: transform 0.3s ease;
+}
+.claw-arm.left { left: 8px; transform: rotate(20deg); }
+.claw-arm.center { left: 50%; margin-left: -2px; transform: rotate(0deg); }
+.claw-arm.right { right: 8px; transform: rotate(-20deg); }
+.claw-head .claw-body {
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    width: 30px; height: 16px;
+    background: linear-gradient(180deg, #ddd, #aaa);
+    border-radius: 6px 6px 2px 2px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+/* Claw closed state */
+.claw-assembly.grabbing .claw-arm.left { transform: rotate(5deg); }
+.claw-assembly.grabbing .claw-arm.right { transform: rotate(-5deg); }
+
+/* Claw dropping animation */
+.claw-assembly.dropping .claw-rope { height: 200px; }
+.claw-assembly.returning .claw-rope { height: 20px; }
+
+/* Toy grid area */
+.toy-pit {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 200px;
+    padding: 10px;
+    display: flex; flex-wrap: wrap; align-content: flex-end;
+    justify-content: center; gap: 6px;
+}
+.toy-item {
+    width: 56px; height: 56px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.2rem;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    cursor: default;
+    transition: all 0.3s ease;
+    position: relative;
+}
+.toy-item:hover { background: rgba(255,255,255,0.08); transform: scale(1.05); }
+.toy-item .rarity-dot {
+    position: absolute; top: 3px; right: 3px;
+    width: 8px; height: 8px; border-radius: 50%;
+}
+.rarity-common .rarity-dot { background: #aaa; }
+.rarity-rare .rarity-dot { background: #4ECDC4; box-shadow: 0 0 6px rgba(78,205,196,0.5); }
+.rarity-epic .rarity-dot { background: #a855f7; box-shadow: 0 0 6px rgba(168,85,247,0.5); }
+.rarity-legendary .rarity-dot { background: #FFE66D; box-shadow: 0 0 6px rgba(255,230,109,0.5); }
+
+/* Drop zone indicator */
+.drop-zone-line {
+    position: absolute; bottom: 200px; left: 10px; right: 10px;
+    height: 1px;
+    background: repeating-linear-gradient(90deg, rgba(78,205,196,0.2), rgba(78,205,196,0.2) 6px, transparent 6px, transparent 12px);
+}
+
+/* Grabbed toy */
+.grabbed-toy {
+    position: absolute; font-size: 2rem;
+    z-index: 15; pointer-events: none;
+    animation: toySwing 0.6s ease-in-out infinite alternate;
+}
+@keyframes toySwing {
+    0% { transform: rotate(-5deg); }
+    100% { transform: rotate(5deg); }
+}
+
+/* CONTROLS */
+.game-controls {
+    display: flex; align-items: center; justify-content: center;
+    gap: 0.5rem; padding: 1rem;
+    background: var(--surface2);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    flex-wrap: wrap;
+}
+.ctrl-btn {
+    width: 52px; height: 52px;
+    background: var(--surface);
+    border: 2px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    color: var(--text);
+    font-size: 1.4rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: all var(--transition);
+}
+.ctrl-btn:hover { border-color: var(--secondary); background: rgba(78,205,196,0.1); }
+.ctrl-btn:active { transform: scale(0.92); }
+.ctrl-btn.drop-btn {
+    width: auto; padding: 0 1.5rem;
+    background: linear-gradient(135deg, var(--primary), #ff8e8e);
+    border-color: var(--primary); font-weight: 700; font-size: 1rem;
+    color: #fff;
+}
+.ctrl-btn.drop-btn:hover { box-shadow: var(--glow-primary); }
+.ctrl-btn.drop-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* GAME MESSAGES */
+.game-message {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    z-index: 50; text-align: center;
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(10px);
+    padding: 2rem; border-radius: var(--radius);
+    border: 2px solid var(--primary);
+    display: none;
+    animation: popIn 0.3s ease;
+}
+.game-message.visible { display: block; }
+.game-message h3 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+.game-message p { color: var(--text-dim); margin-bottom: 1rem; }
+.game-message .prize-emoji { font-size: 3rem; margin-bottom: 0.5rem; }
+@keyframes popIn {
+    0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+/* WIN CONFETTI */
+.confetti-piece {
+    position: fixed; width: 10px; height: 10px;
+    z-index: 9999; pointer-events: none;
+    animation: confettiFall 2.5s ease-out forwards;
+}
+@keyframes confettiFall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+
+/* ===== PRIZE GALLERY ===== */
+.prize-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1rem;
+}
+.prize-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 1.2rem;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: all var(--transition);
+}
+.prize-card:hover { transform: translateY(-3px); border-color: rgba(255,107,107,0.3); }
+.prize-card .prize-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.prize-card .prize-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.3rem; }
+.prize-card .prize-rarity {
+    font-size: 0.7rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    padding: 0.15rem 0.5rem; border-radius: 20px;
+    display: inline-block;
+}
+.prize-card .rarity-common { background: rgba(170,170,170,0.15); color: #aaa; }
+.prize-card .rarity-rare { background: rgba(78,205,196,0.15); color: var(--secondary); }
+.prize-card .rarity-epic { background: rgba(168,85,247,0.15); color: #a855f7; }
+.prize-card .rarity-legendary { background: rgba(255,230,109,0.15); color: var(--accent); }
+
+/* ===== MY COLLECTION ===== */
+.collection-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 0.75rem;
+}
+.collection-item {
+    background: var(--surface);
+    border-radius: 10px; padding: 0.75rem;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.06);
+}
+.collection-item .ci-emoji { font-size: 2rem; }
+.collection-item .ci-count { font-size: 0.75rem; color: var(--text-dim); margin-top: 0.2rem; }
+.collection-empty { text-align: center; color: var(--text-dim); padding: 2rem; }
+
+/* ===== HOW IT WORKS ===== */
+.steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
+.step-card {
+    background: var(--surface); border-radius: var(--radius);
+    padding: 2rem; text-align: center;
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: all var(--transition);
+}
+.step-card:hover { transform: translateY(-3px); border-color: rgba(78,205,196,0.3); }
+.step-num {
+    width: 48px; height: 48px; margin: 0 auto 1rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; font-weight: 800; color: #fff;
+}
+.step-card h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+.step-card p { color: var(--text-dim); font-size: 0.9rem; }
+
+/* ===== STATS BAR ===== */
+.stats-bar {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem; padding: 2rem 0;
+}
+.stat-card {
+    background: var(--surface); border-radius: var(--radius);
+    padding: 1.5rem; text-align: center;
+    border: 1px solid rgba(255,255,255,0.06);
+}
+.stat-card .stat-val { font-size: 2rem; font-weight: 800; color: var(--primary); }
+.stat-card .stat-label { color: var(--text-dim); font-size: 0.85rem; margin-top: 0.25rem; }
+
+/* ===== DAILY BONUS ===== */
+.bonus-section {
+    background: linear-gradient(135deg, rgba(255,107,107,0.08), rgba(78,205,196,0.08));
+    border-radius: var(--radius);
+    padding: 2.5rem; text-align: center;
+    border: 1px solid rgba(255,255,255,0.06);
+    margin: 2rem 0;
+}
+.bonus-section h3 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+.bonus-section p { color: var(--text-dim); margin-bottom: 1.5rem; }
+.bonus-btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: linear-gradient(135deg, var(--accent), #ffd93d);
+    color: var(--bg); font-weight: 700; font-size: 1rem;
+    padding: 0.8rem 2rem; border-radius: 50px;
+    transition: all var(--transition); border: none;
+}
+.bonus-btn:hover { transform: translateY(-2px); box-shadow: var(--glow-accent); }
+.bonus-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.bonus-timer { margin-top: 0.75rem; color: var(--text-dim); font-size: 0.85rem; }
+
+/* ===== SHARE SECTION ===== */
+.share-section {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 2.5rem; text-align: center;
+    border: 1px solid rgba(255,255,255,0.06);
+    margin: 2rem 0;
+}
+.share-section h3 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+.share-section p { color: var(--text-dim); margin-bottom: 1.5rem; }
+.share-btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: #1da1f2; color: #fff;
+    font-weight: 700; font-size: 1rem;
+    padding: 0.8rem 2rem; border-radius: 50px;
+    transition: all var(--transition); border: none;
+}
+.share-btn:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(29,161,242,0.3); }
+
+/* ===== FAQ ===== */
+.faq-list { max-width: 700px; margin: 0 auto; }
+.faq-item {
+    background: var(--surface);
+    border-radius: var(--radius);
+    margin-bottom: 0.75rem;
+    border: 1px solid rgba(255,255,255,0.06);
+    overflow: hidden;
+}
+.faq-q {
+    width: 100%; padding: 1.2rem 1.5rem;
+    background: none; color: var(--text);
+    font-size: 1rem; font-weight: 600;
+    text-align: left;
+    display: flex; justify-content: space-between; align-items: center;
+    transition: color var(--transition);
+}
+.faq-q:hover { color: var(--primary); }
+.faq-q .faq-arrow { transition: transform 0.3s ease; font-size: 0.8rem; }
+.faq-item.open .faq-q .faq-arrow { transform: rotate(180deg); }
+.faq-a { padding: 0 1.5rem; max-height: 0; overflow: hidden; transition: all 0.3s ease; }
+.faq-item.open .faq-a { max-height: 300px; padding-bottom: 1.2rem; }
+.faq-a p { color: var(--text-dim); font-size: 0.95rem; }
+
+/* ===== EMAIL CAPTURE ===== */
+.email-section {
+    background: linear-gradient(135deg, rgba(78,205,196,0.08), rgba(168,85,247,0.08));
+    border-radius: var(--radius);
+    padding: 2.5rem; text-align: center;
+    border: 1px solid rgba(255,255,255,0.06);
+}
+.email-section h3 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+.email-section p { color: var(--text-dim); margin-bottom: 1.5rem; }
+.email-form { display: flex; gap: 0.5rem; max-width: 400px; margin: 0 auto; }
+.email-form input {
+    flex: 1; padding: 0.8rem 1rem;
+    background: var(--surface); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 50px; color: var(--text); font-size: 0.95rem;
+    outline: none; transition: border-color var(--transition);
+}
+.email-form input:focus { border-color: var(--secondary); }
+.email-form button {
+    background: linear-gradient(135deg, var(--secondary), #3dbdb5);
+    color: #fff; font-weight: 700; padding: 0.8rem 1.5rem;
+    border-radius: 50px; border: none; white-space: nowrap;
+    transition: all var(--transition);
+}
+.email-form button:hover { transform: translateY(-2px); }
+.email-msg { margin-top: 0.75rem; font-size: 0.85rem; }
+.email-msg.success { color: var(--secondary); }
+.email-msg.error { color: var(--primary); }
+
+/* ===== FOOTER ===== */
+.site-footer {
+    background: var(--surface);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 3rem 1.5rem 2rem;
+    margin-top: 4rem;
+}
+.footer-grid {
+    max-width: 1200px; margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 2rem;
+}
+.footer-col h4 {
+    font-size: 0.85rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--primary); margin-bottom: 1rem;
+}
+.footer-col a { display: block; color: var(--text-dim); font-size: 0.9rem; padding: 0.2rem 0; transition: color var(--transition); }
+.footer-col a:hover { color: var(--text); }
+.footer-bottom {
+    max-width: 1200px; margin: 2rem auto 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    text-align: center;
+    color: var(--text-dim); font-size: 0.8rem;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 640px) {
+    .hero h1 { font-size: 2rem; }
+    .hero p { font-size: 1rem; }
+    .claw-area { height: 360px; }
+    .toy-pit { height: 170px; }
+    .toy-item { width: 46px; height: 46px; font-size: 1.8rem; }
+    .ctrl-btn { width: 44px; height: 44px; font-size: 1.2rem; }
+    .ctrl-btn.drop-btn { padding: 0 1rem; font-size: 0.9rem; }
+    .game-controls { gap: 0.4rem; }
+    .prize-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+    .email-form { flex-direction: column; }
+    .footer-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== LOADING SCREEN ===== -->
+<div id="loading-screen">
+    <div class="loader-icon">🧸</div>
+    <h2>Claw.Toys</h2>
+    <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="load-progress"></div>
+    </div>
+    <p class="load-text" id="load-text">Warming up the claw...</p>
+</div>
+
+<!-- ===== NETWORK BAR ===== -->
+<nav class="network-bar" aria-label="Network navigation">
+    <div class="network-bar-inner">
+        <div class="nb-group">
+            <span class="nb-label">Claw</span>
+            <a href="https://claw.pizza" class="nb-link">Pizza</a>
+            <a href="https://claw.toys" class="nb-link active">Toys</a>
+            <a href="https://claw.green" class="nb-link">Green</a>
+            <a href="https://claw.horse" class="nb-link">Horse</a>
+            <a href="https://claw.christmas" class="nb-link">Christmas</a>
+            <a href="https://claw.tattoo" class="nb-link">Tattoo</a>
+            <a href="https://claw.rentals" class="nb-link">Rentals</a>
+        </div>
+        <div class="nb-group">
+            <span class="nb-label">Monkey</span>
+            <a href="https://monkey.boutique" class="nb-link">Boutique</a>
+            <a href="https://monkey.football" class="nb-link">Football</a>
+            <a href="https://monkey.garden" class="nb-link">Garden</a>
+        </div>
+        <div class="nb-group">
+            <span class="nb-label">Play</span>
+            <a href="https://spunk.bet" class="nb-link">Spunk.Bet</a>
+        </div>
+    </div>
+</nav>
+
+<!-- ===== HEADER ===== -->
+<header class="site-header">
+    <div class="header-inner">
+        <a href="/" class="logo">
+            <span class="emoji">🧸</span>
+            claw<span>.toys</span>
+        </a>
+        <div class="header-right">
+            <div class="credits-display">
+                <span class="coin">🪙</span>
+                <span class="count" id="header-credits">10</span>
+            </div>
+            <button class="sound-toggle" id="sound-toggle" title="Toggle Sound" aria-label="Toggle sound">🔊</button>
+        </div>
+    </div>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+    <h1>Grab Your Prize!</h1>
+    <p>Free online claw machine arcade. Move the claw, drop it, and win toys. No downloads, no fees, just fun.</p>
+    <a href="#game" class="btn-primary">🕹️ Play Now</a>
+</section>
+
+<!-- ===== CLAW MACHINE GAME ===== -->
+<section class="game-section" id="game">
+    <div class="game-container">
+        <div class="game-top-bar">
+            <span class="game-credits">🪙 Credits: <span id="game-credits">10</span></span>
+            <span class="game-status" id="game-status">Ready to Play</span>
+            <span class="game-wins">🏆 Wins: <span id="game-wins">0</span></span>
+        </div>
+        <div class="claw-area" id="claw-area">
+            <div class="claw-rail"></div>
+            <div class="claw-assembly" id="claw-assembly">
+                <div class="claw-rope" id="claw-rope"></div>
+                <div class="claw-head">
+                    <div class="claw-body"></div>
+                    <div class="claw-arm left"></div>
+                    <div class="claw-arm center"></div>
+                    <div class="claw-arm right"></div>
+                </div>
+            </div>
+            <div class="drop-zone-line"></div>
+            <div class="toy-pit" id="toy-pit"></div>
+            <div class="game-message" id="game-message">
+                <div class="prize-emoji" id="msg-prize"></div>
+                <h3 id="msg-title">You Won!</h3>
+                <p id="msg-text">Amazing grab!</p>
+                <button class="btn-primary" id="msg-close" style="font-size:0.9rem;padding:0.6rem 1.5rem;">Play Again</button>
+            </div>
+        </div>
+        <div class="game-controls">
+            <button class="ctrl-btn" id="btn-left" aria-label="Move left">◀</button>
+            <button class="ctrl-btn" id="btn-up" aria-label="Move up">▲</button>
+            <button class="ctrl-btn" id="btn-down" aria-label="Move down">▼</button>
+            <button class="ctrl-btn" id="btn-right" aria-label="Move right">▶</button>
+            <button class="ctrl-btn drop-btn" id="btn-drop" aria-label="Drop claw">🪝 DROP</button>
+        </div>
+    </div>
+</section>
+
+<!-- ===== MY COLLECTION ===== -->
+<section class="section" id="collection">
+    <h2 class="section-title">My <span class="highlight">Collection</span></h2>
+    <p class="section-sub">Your prize cabinet. Every toy you grab is saved here.</p>
+    <div class="collection-grid" id="collection-grid">
+        <div class="collection-empty" id="collection-empty">No prizes yet. Play the claw machine to start collecting!</div>
+    </div>
+</section>
+
+<!-- ===== PRIZE GALLERY ===== -->
+<section class="section" id="prizes">
+    <h2 class="section-title">Prize <span class="highlight">Gallery</span></h2>
+    <p class="section-sub">Over 30 unique toys to collect across four rarity tiers.</p>
+    <div class="prize-grid" id="prize-grid"></div>
+</section>
+
+<!-- ===== HOW IT WORKS ===== -->
+<section class="section" id="how">
+    <h2 class="section-title">How It <span class="highlight">Works</span></h2>
+    <p class="section-sub">Three simple steps to win prizes.</p>
+    <div class="steps-grid">
+        <div class="step-card">
+            <div class="step-num">1</div>
+            <h3>Move the Claw</h3>
+            <p>Use the arrow buttons or your keyboard arrows to position the claw above your target prize.</p>
+        </div>
+        <div class="step-card">
+            <div class="step-num">2</div>
+            <h3>Drop &amp; Grab</h3>
+            <p>Hit the DROP button or press spacebar. The claw descends and attempts to grab the toy below it.</p>
+        </div>
+        <div class="step-card">
+            <div class="step-num">3</div>
+            <h3>Win Prizes</h3>
+            <p>If the claw holds on, the prize is yours! Collect them all and share your wins on X.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ===== STATS ===== -->
+<section class="section" id="stats">
+    <h2 class="section-title">Live <span class="highlight">Stats</span></h2>
+    <p class="section-sub">Real-time arcade statistics from all players.</p>
+    <div class="stats-bar">
+        <div class="stat-card">
+            <div class="stat-val" id="stat-plays">0</div>
+            <div class="stat-label">Total Plays</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-val" id="stat-prizes">0</div>
+            <div class="stat-label">Prizes Won</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-val" id="stat-players">0</div>
+            <div class="stat-label">Active Players</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-val" id="stat-legendaries">0</div>
+            <div class="stat-label">Legendaries Found</div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== DAILY BONUS ===== -->
+<section class="section">
+    <div class="bonus-section" id="bonus-section">
+        <h3>🎁 Daily Bonus</h3>
+        <p>Come back every day for 5 free credits. Play more, collect more!</p>
+        <button class="bonus-btn" id="bonus-btn">🪙 Claim 5 Free Credits</button>
+        <div class="bonus-timer" id="bonus-timer"></div>
+    </div>
+</section>
+
+<!-- ===== SHARE ON X ===== -->
+<section class="section">
+    <div class="share-section">
+        <h3>📢 Share &amp; Earn</h3>
+        <p>Share Claw.Toys on X and earn 3 bonus credits instantly!</p>
+        <button class="share-btn" id="share-btn">Share on X for +3 Credits</button>
+    </div>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section class="section" id="faq">
+    <h2 class="section-title"><span class="highlight">FAQ</span></h2>
+    <p class="section-sub">Everything you need to know about Claw.Toys.</p>
+    <div class="faq-list">
+        <div class="faq-item">
+            <button class="faq-q">Is Claw.Toys really free? <span class="faq-arrow">▼</span></button>
+            <div class="faq-a"><p>Yes, completely free! You start with 10 credits and earn 5 more every day with the daily bonus. You can also earn credits by sharing on X. There are no purchases or hidden fees.</p></div>
+        </div>
+        <div class="faq-item">
+            <button class="faq-q">How does the claw machine work? <span class="faq-arrow">▼</span></button>
+            <div class="faq-a"><p>Use the arrow keys or on-screen buttons to move the claw left, right, up, and down. When the claw is positioned above a prize, press DROP (or spacebar). The claw descends and attempts to grab the toy. Each play costs 1 credit, and the base win chance is 30%, just like a real claw machine!</p></div>
+        </div>
+        <div class="faq-item">
+            <button class="faq-q">Are my prizes saved? <span class="faq-arrow">▼</span></button>
+            <div class="faq-a"><p>Yes! All your prizes and credits are saved in your browser's localStorage. They persist between sessions as long as you don't clear your browser data. Your collection will be waiting for you when you come back.</p></div>
+        </div>
+        <div class="faq-item">
+            <button class="faq-q">Can I play on my phone? <span class="faq-arrow">▼</span></button>
+            <div class="faq-a"><p>Absolutely. Claw.Toys is fully responsive and works great on phones and tablets. Use the on-screen arrow buttons to control the claw and tap DROP to play. It also works as a PWA, so you can add it to your home screen for quick access.</p></div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== EMAIL CAPTURE ===== -->
+<section class="section" id="newsletter">
+    <div class="email-section">
+        <h3>🔔 Stay in the Loop</h3>
+        <p>Get notified when we add new prizes, features, and special events.</p>
+        <form class="email-form" id="email-form">
+            <input type="email" id="email-input" placeholder="you@example.com" required aria-label="Email address">
+            <button type="submit">Subscribe</button>
+        </form>
+        <p class="email-msg" id="email-msg"></p>
+    </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="site-footer">
+    <div class="footer-grid">
+        <div class="footer-col">
+            <h4>Claw Network</h4>
+            <a href="https://claw.pizza">Claw.Pizza</a>
+            <a href="https://claw.toys">Claw.Toys</a>
+            <a href="https://claw.green">Claw.Green</a>
+            <a href="https://claw.horse">Claw.Horse</a>
+            <a href="https://claw.christmas">Claw.Christmas</a>
+            <a href="https://claw.tattoo">Claw.Tattoo</a>
+            <a href="https://claw.rentals">Claw.Rentals</a>
+        </div>
+        <div class="footer-col">
+            <h4>Our Network</h4>
+            <a href="https://monkey.boutique">Monkey.Boutique</a>
+            <a href="https://monkey.football">Monkey.Football</a>
+            <a href="https://monkey.garden">Monkey.Garden</a>
+            <a href="https://spunk.bet">Spunk.Bet</a>
+        </div>
+        <div class="footer-col">
+            <h4>Partners</h4>
+            <a href="https://predict.horse">Predict.Horse</a>
+            <a href="https://predict.pics">Predict.Pics</a>
+            <a href="https://predict.codes">Predict.Codes</a>
+            <a href="https://predict.surf">Predict.Surf</a>
+        </div>
+        <div class="footer-col">
+            <h4>Connect</h4>
+            <a href="https://x.com/SpunkArt13" target="_blank" rel="noopener">X / Twitter</a>
+            <a href="https://github.com/Spunkeroo" target="_blank" rel="noopener">GitHub</a>
+            <a href="/privacy.html">Privacy Policy</a>
+            <a href="/blog/best-online-claw-machines-2026.html">Blog</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        &copy; 2026 Claw.Toys &mdash; Free Online Claw Machine Arcade. All rights reserved.
+    </div>
+</footer>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+/* ===================================================
+   CLAW.TOYS — COMPLETE GAME ENGINE
+   =================================================== */
+(function() {
+    'use strict';
+
+    /* ===== TOY DATA ===== */
+    const TOYS = [
+        { emoji: '🧸', name: 'Teddy Bear', rarity: 'common' },
+        { emoji: '🤖', name: 'Robot', rarity: 'common' },
+        { emoji: '🚗', name: 'Red Car', rarity: 'common' },
+        { emoji: '🎀', name: 'Bow Doll', rarity: 'common' },
+        { emoji: '🐶', name: 'Puppy Plush', rarity: 'common' },
+        { emoji: '🐱', name: 'Kitty Plush', rarity: 'common' },
+        { emoji: '🦁', name: 'Lion Cub', rarity: 'common' },
+        { emoji: '🐸', name: 'Froggy', rarity: 'common' },
+        { emoji: '🎲', name: 'Lucky Dice', rarity: 'common' },
+        { emoji: '⚽', name: 'Soccer Ball', rarity: 'common' },
+        { emoji: '🚀', name: 'Rocket Ship', rarity: 'rare' },
+        { emoji: '🦄', name: 'Unicorn', rarity: 'rare' },
+        { emoji: '🐉', name: 'Baby Dragon', rarity: 'rare' },
+        { emoji: '🎸', name: 'Mini Guitar', rarity: 'rare' },
+        { emoji: '🛸', name: 'UFO', rarity: 'rare' },
+        { emoji: '🎪', name: 'Circus Tent', rarity: 'rare' },
+        { emoji: '🦊', name: 'Fox Plush', rarity: 'rare' },
+        { emoji: '🐧', name: 'Penguin', rarity: 'rare' },
+        { emoji: '🎭', name: 'Theater Masks', rarity: 'rare' },
+        { emoji: '🏎️', name: 'Race Car', rarity: 'rare' },
+        { emoji: '👾', name: 'Pixel Alien', rarity: 'epic' },
+        { emoji: '🦖', name: 'T-Rex', rarity: 'epic' },
+        { emoji: '🧜', name: 'Mermaid', rarity: 'epic' },
+        { emoji: '🤴', name: 'Prince', rarity: 'epic' },
+        { emoji: '🧙', name: 'Wizard', rarity: 'epic' },
+        { emoji: '🦋', name: 'Crystal Butterfly', rarity: 'epic' },
+        { emoji: '🌈', name: 'Rainbow Bear', rarity: 'epic' },
+        { emoji: '🎠', name: 'Carousel Horse', rarity: 'legendary' },
+        { emoji: '🗿', name: 'Mystery Idol', rarity: 'legendary' },
+        { emoji: '👑', name: 'Golden Crown', rarity: 'legendary' },
+        { emoji: '💎', name: 'Diamond Plush', rarity: 'legendary' },
+        { emoji: '🏆', name: 'Trophy Bear', rarity: 'legendary' },
+    ];
+
+    const RARITY_WEIGHTS = { common: 50, rare: 30, epic: 15, legendary: 5 };
+    const RARITY_COLORS = { common: '#aaa', rare: '#4ECDC4', epic: '#a855f7', legendary: '#FFE66D' };
+    const WIN_BASE_CHANCE = 0.30;
+    const CLAW_MOVE_STEP = 18;
+    const CREDITS_PER_PLAY = 1;
+    const DAILY_BONUS_CREDITS = 5;
+    const SHARE_BONUS_CREDITS = 3;
+    const INITIAL_CREDITS = 10;
+
+    /* ===== STORAGE MANAGER ===== */
+    const Storage = {
+        get(key, fallback) {
+            try { const v = localStorage.getItem('claw_' + key); return v !== null ? JSON.parse(v) : fallback; }
+            catch { return fallback; }
+        },
+        set(key, val) {
+            try { localStorage.setItem('claw_' + key, JSON.stringify(val)); } catch {}
+        }
+    };
+
+    /* ===== GAME STATE ===== */
+    let credits = Storage.get('credits', INITIAL_CREDITS);
+    let wins = Storage.get('wins', 0);
+    let collection = Storage.get('collection', {});
+    let totalPlays = Storage.get('totalPlays', 0);
+    let soundEnabled = Storage.get('sound', true);
+    let isPlaying = false;
+    let clawX = 50; // percent from left
+    let clawBaseTop = 12; // px, below rail
+
+    /* ===== DOM REFS ===== */
+    const $ = (s) => document.querySelector(s);
+    const $$ = (s) => document.querySelectorAll(s);
+
+    /* ===== AUDIO ===== */
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function ensureAudio() {
+        if (!audioCtx) { try { audioCtx = new AudioCtx(); } catch {} }
+    }
+
+    function playTone(freq, dur, type) {
+        if (!soundEnabled || !audioCtx) return;
+        try {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type || 'sine';
+            osc.frequency.value = freq;
+            gain.gain.value = 0.08;
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + dur);
+        } catch {}
+    }
+
+    function sfxMove() { playTone(300, 0.05, 'square'); }
+    function sfxDrop() { playTone(200, 0.3, 'sawtooth'); }
+    function sfxWin() {
+        [523, 659, 784, 1047].forEach((f, i) => {
+            setTimeout(() => playTone(f, 0.2, 'sine'), i * 100);
+        });
+    }
+    function sfxLose() { playTone(150, 0.4, 'sawtooth'); }
+
+    /* ===== LOADING SCREEN ===== */
+    function initLoading() {
+        const bar = $('#load-progress');
+        const txt = $('#load-text');
+        const msgs = ['Warming up the claw...', 'Loading toys...', 'Polishing prizes...', 'Inserting coins...', 'Almost ready...'];
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += Math.random() * 25 + 10;
+            if (progress > 100) progress = 100;
+            bar.style.width = progress + '%';
+            txt.textContent = msgs[Math.min(Math.floor(progress / 25), msgs.length - 1)];
+            if (progress >= 100) {
+                clearInterval(interval);
+                setTimeout(() => {
+                    $('#loading-screen').classList.add('hidden');
+                    setTimeout(() => { $('#loading-screen').remove(); }, 500);
+                }, 400);
+            }
+        }, 300);
+    }
+
+    /* ===== POPULATE TOY PIT ===== */
+    function populateToyPit() {
+        const pit = $('#toy-pit');
+        pit.innerHTML = '';
+        // Fill with 24 random toys weighted by rarity
+        const pitToys = [];
+        for (let i = 0; i < 24; i++) {
+            pitToys.push(pickWeightedToy());
+        }
+        pitToys.forEach((toy, idx) => {
+            const el = document.createElement('div');
+            el.className = 'toy-item rarity-' + toy.rarity;
+            el.dataset.idx = idx;
+            el.dataset.emoji = toy.emoji;
+            el.dataset.name = toy.name;
+            el.dataset.rarity = toy.rarity;
+            el.innerHTML = toy.emoji + '<span class="rarity-dot"></span>';
+            pit.appendChild(el);
+        });
+    }
+
+    function pickWeightedToy() {
+        const totalWeight = Object.values(RARITY_WEIGHTS).reduce((a, b) => a + b, 0);
+        let rand = Math.random() * totalWeight;
+        let chosenRarity = 'common';
+        for (const [rarity, weight] of Object.entries(RARITY_WEIGHTS)) {
+            rand -= weight;
+            if (rand <= 0) { chosenRarity = rarity; break; }
+        }
+        const candidates = TOYS.filter(t => t.rarity === chosenRarity);
+        return candidates[Math.floor(Math.random() * candidates.length)];
+    }
+
+    /* ===== PRIZE GALLERY ===== */
+    function renderPrizeGallery() {
+        const grid = $('#prize-grid');
+        grid.innerHTML = '';
+        TOYS.forEach(toy => {
+            const card = document.createElement('div');
+            card.className = 'prize-card';
+            card.innerHTML = `
+                <div class="prize-icon">${toy.emoji}</div>
+                <div class="prize-name">${toy.name}</div>
+                <span class="prize-rarity rarity-${toy.rarity}">${toy.rarity}</span>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    /* ===== COLLECTION ===== */
+    function renderCollection() {
+        const grid = $('#collection-grid');
+        const empty = $('#collection-empty');
+        const keys = Object.keys(collection);
+        if (keys.length === 0) {
+            grid.innerHTML = '';
+            grid.appendChild(empty);
+            empty.style.display = 'block';
+            return;
+        }
+        grid.innerHTML = '';
+        keys.forEach(emoji => {
+            const count = collection[emoji].count;
+            const name = collection[emoji].name;
+            const item = document.createElement('div');
+            item.className = 'collection-item';
+            item.title = name;
+            item.innerHTML = `<div class="ci-emoji">${emoji}</div><div class="ci-count">x${count}</div>`;
+            grid.appendChild(item);
+        });
+    }
+
+    /* ===== UPDATE UI ===== */
+    function updateCreditsUI() {
+        $('#header-credits').textContent = credits;
+        $('#game-credits').textContent = credits;
+        Storage.set('credits', credits);
+    }
+
+    function updateWinsUI() {
+        $('#game-wins').textContent = wins;
+        Storage.set('wins', wins);
+    }
+
+    /* ===== CLAW POSITION ===== */
+    function updateClawPosition() {
+        const area = $('#claw-area');
+        const assembly = $('#claw-assembly');
+        const areaW = area.offsetWidth;
+        const clawW = 50;
+        const pxLeft = (clawX / 100) * (areaW - clawW);
+        assembly.style.left = pxLeft + 'px';
+    }
+
+    function moveClaw(dir) {
+        if (isPlaying) return;
+        ensureAudio();
+        sfxMove();
+        const area = $('#claw-area');
+        const areaW = area.offsetWidth;
+        const step = (CLAW_MOVE_STEP / areaW) * 100;
+        if (dir === 'left') clawX = Math.max(2, clawX - step);
+        if (dir === 'right') clawX = Math.min(98, clawX + step);
+        updateClawPosition();
+    }
+
+    /* ===== DROP CLAW ===== */
+    function dropClaw() {
+        if (isPlaying) return;
+        if (credits < CREDITS_PER_PLAY) {
+            showMessage('😢', 'No Credits!', 'Claim your daily bonus or share on X for more credits.');
+            return;
+        }
+        ensureAudio();
+        isPlaying = true;
+        credits -= CREDITS_PER_PLAY;
+        totalPlays++;
+        Storage.set('totalPlays', totalPlays);
+        updateCreditsUI();
+        $('#game-status').textContent = 'Dropping...';
+        $('#btn-drop').disabled = true;
+        sfxDrop();
+
+        const assembly = $('#claw-assembly');
+        const rope = $('#claw-rope');
+
+        // Phase 1: Drop the claw
+        assembly.classList.add('dropping');
+        rope.style.height = '200px';
+
+        setTimeout(() => {
+            // Phase 2: Grab
+            assembly.classList.add('grabbing');
+            $('#game-status').textContent = 'Grabbing...';
+
+            setTimeout(() => {
+                // Determine win/loss
+                const didWin = Math.random() < getWinChance();
+
+                let grabbedToy = null;
+                if (didWin) {
+                    grabbedToy = getTargetToy();
+                }
+
+                // Phase 3: Retract
+                assembly.classList.remove('dropping');
+                assembly.classList.add('returning');
+                rope.style.height = '20px';
+
+                if (didWin && grabbedToy) {
+                    // Show grabbed toy attached to claw
+                    const toyEl = document.createElement('div');
+                    toyEl.className = 'grabbed-toy';
+                    toyEl.textContent = grabbedToy.emoji;
+                    toyEl.style.left = '10px';
+                    toyEl.style.bottom = '-30px';
+                    assembly.querySelector('.claw-head').appendChild(toyEl);
+                }
+
+                setTimeout(() => {
+                    // Phase 4: Result
+                    assembly.classList.remove('grabbing', 'returning');
+
+                    // Remove grabbed toy element
+                    const gt = assembly.querySelector('.grabbed-toy');
+                    if (gt) gt.remove();
+
+                    if (didWin && grabbedToy) {
+                        wins++;
+                        updateWinsUI();
+                        addToCollection(grabbedToy);
+                        sfxWin();
+                        spawnConfetti();
+                        showMessage(grabbedToy.emoji, 'You Won!', `You grabbed a ${grabbedToy.name}! (${grabbedToy.rarity})`);
+                        // Replace toy in pit
+                        replaceToyInPit();
+                        // Firebase increment
+                        fbIncrement('prizes_won');
+                        if (grabbedToy.rarity === 'legendary') fbIncrement('legendaries');
+                    } else {
+                        sfxLose();
+                        showMessage('😔', 'Almost!', 'The claw slipped! Try again — the next one could be yours.');
+                    }
+
+                    fbIncrement('total_plays');
+                    $('#game-status').textContent = 'Ready to Play';
+                    $('#btn-drop').disabled = false;
+                    isPlaying = false;
+                }, 800);
+            }, 600);
+        }, 600);
+    }
+
+    function getWinChance() {
+        // Base 30%, slightly higher for rare targeting
+        return WIN_BASE_CHANCE;
+    }
+
+    function getTargetToy() {
+        // Pick from pit toys based on claw position
+        const pit = $('#toy-pit');
+        const toys = pit.querySelectorAll('.toy-item');
+        if (toys.length === 0) return pickWeightedToy();
+
+        const area = $('#claw-area');
+        const areaW = area.offsetWidth;
+        const clawPx = (clawX / 100) * areaW;
+
+        // Find closest toy to claw X position
+        let closest = null;
+        let closestDist = Infinity;
+        toys.forEach(t => {
+            const rect = t.getBoundingClientRect();
+            const areaRect = area.getBoundingClientRect();
+            const toyCenter = rect.left - areaRect.left + rect.width / 2;
+            const dist = Math.abs(toyCenter - clawPx);
+            if (dist < closestDist) {
+                closestDist = dist;
+                closest = t;
+            }
+        });
+
+        if (closest) {
+            return {
+                emoji: closest.dataset.emoji,
+                name: closest.dataset.name,
+                rarity: closest.dataset.rarity
+            };
+        }
+        return pickWeightedToy();
+    }
+
+    function replaceToyInPit() {
+        const pit = $('#toy-pit');
+        const toys = pit.querySelectorAll('.toy-item');
+        if (toys.length === 0) return;
+        // Remove a random toy and add a new one
+        const removeIdx = Math.floor(Math.random() * toys.length);
+        pit.removeChild(toys[removeIdx]);
+        const newToy = pickWeightedToy();
+        const el = document.createElement('div');
+        el.className = 'toy-item rarity-' + newToy.rarity;
+        el.dataset.emoji = newToy.emoji;
+        el.dataset.name = newToy.name;
+        el.dataset.rarity = newToy.rarity;
+        el.innerHTML = newToy.emoji + '<span class="rarity-dot"></span>';
+        pit.appendChild(el);
+    }
+
+    function addToCollection(toy) {
+        if (!collection[toy.emoji]) {
+            collection[toy.emoji] = { name: toy.name, count: 0, rarity: toy.rarity };
+        }
+        collection[toy.emoji].count++;
+        Storage.set('collection', collection);
+        renderCollection();
+    }
+
+    /* ===== MESSAGES ===== */
+    function showMessage(emoji, title, text) {
+        const msg = $('#game-message');
+        $('#msg-prize').textContent = emoji;
+        $('#msg-title').textContent = title;
+        $('#msg-text').textContent = text;
+        msg.classList.add('visible');
+    }
+
+    function hideMessage() {
+        $('#game-message').classList.remove('visible');
+    }
+
+    /* ===== CONFETTI ===== */
+    function spawnConfetti() {
+        const colors = ['#FF6B6B', '#4ECDC4', '#FFE66D', '#a855f7', '#ff8e8e', '#3dbdb5'];
+        for (let i = 0; i < 60; i++) {
+            const piece = document.createElement('div');
+            piece.className = 'confetti-piece';
+            piece.style.left = Math.random() * 100 + 'vw';
+            piece.style.top = '-10px';
+            piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+            piece.style.width = (Math.random() * 8 + 5) + 'px';
+            piece.style.height = (Math.random() * 8 + 5) + 'px';
+            piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+            piece.style.animationDuration = (Math.random() * 1.5 + 1.5) + 's';
+            piece.style.animationDelay = (Math.random() * 0.5) + 's';
+            document.body.appendChild(piece);
+            setTimeout(() => piece.remove(), 3000);
+        }
+    }
+
+    /* ===== DAILY BONUS ===== */
+    function initDailyBonus() {
+        const btn = $('#bonus-btn');
+        const timer = $('#bonus-timer');
+        const lastClaim = Storage.get('lastBonus', 0);
+        const now = Date.now();
+        const cooldown = 24 * 60 * 60 * 1000;
+        const remaining = cooldown - (now - lastClaim);
+
+        if (remaining > 0) {
+            btn.disabled = true;
+            btn.textContent = 'Already Claimed';
+            updateBonusTimer(remaining, timer, btn);
+        } else {
+            btn.disabled = false;
+            btn.textContent = '🪙 Claim 5 Free Credits';
+            timer.textContent = '';
+        }
+
+        btn.addEventListener('click', () => {
+            if (btn.disabled) return;
+            credits += DAILY_BONUS_CREDITS;
+            updateCreditsUI();
+            Storage.set('lastBonus', Date.now());
+            btn.disabled = true;
+            btn.textContent = 'Claimed!';
+            sfxWin();
+            spawnConfetti();
+            setTimeout(() => {
+                btn.textContent = 'Already Claimed';
+                updateBonusTimer(cooldown, timer, btn);
+            }, 1500);
+        });
+    }
+
+    function updateBonusTimer(remaining, timerEl, btn) {
+        const tick = () => {
+            remaining -= 1000;
+            if (remaining <= 0) {
+                timerEl.textContent = '';
+                btn.disabled = false;
+                btn.textContent = '🪙 Claim 5 Free Credits';
+                return;
+            }
+            const h = Math.floor(remaining / 3600000);
+            const m = Math.floor((remaining % 3600000) / 60000);
+            const s = Math.floor((remaining % 60000) / 1000);
+            timerEl.textContent = `Next bonus in ${h}h ${m}m ${s}s`;
+            setTimeout(tick, 1000);
+        };
+        tick();
+    }
+
+    /* ===== SHARE ON X ===== */
+    function initShare() {
+        $('#share-btn').addEventListener('click', () => {
+            const lastShare = Storage.get('lastShare', 0);
+            const now = Date.now();
+            const cooldown = 60 * 60 * 1000; // 1 hour cooldown
+            if (now - lastShare < cooldown) {
+                const mins = Math.ceil((cooldown - (now - lastShare)) / 60000);
+                alert('Share bonus available again in ' + mins + ' minutes!');
+                return;
+            }
+            const text = encodeURIComponent('🧸 I\'m playing the free claw machine at Claw.Toys! Grab teddy bears, robots, unicorns and more. Try it! @SpunkArt13\n\nhttps://claw.toys');
+            window.open('https://x.com/intent/tweet?text=' + text, '_blank');
+            credits += SHARE_BONUS_CREDITS;
+            updateCreditsUI();
+            Storage.set('lastShare', now);
+            sfxWin();
+        });
+    }
+
+    /* ===== FAQ ===== */
+    function initFAQ() {
+        $$('.faq-q').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const item = btn.parentElement;
+                const wasOpen = item.classList.contains('open');
+                $$('.faq-item').forEach(i => i.classList.remove('open'));
+                if (!wasOpen) item.classList.add('open');
+            });
+        });
+    }
+
+    /* ===== EMAIL CAPTURE ===== */
+    function initEmail() {
+        $('#email-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = $('#email-input').value.trim();
+            const msg = $('#email-msg');
+            if (!email || !email.includes('@')) {
+                msg.textContent = 'Please enter a valid email.';
+                msg.className = 'email-msg error';
+                return;
+            }
+            // Save to Firebase
+            fbSaveEmail(email);
+            msg.textContent = 'You\'re subscribed! Watch your inbox.';
+            msg.className = 'email-msg success';
+            $('#email-input').value = '';
+        });
+    }
+
+    /* ===== KEYBOARD CONTROLS ===== */
+    function initKeyboard() {
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            switch(e.key) {
+                case 'ArrowLeft': case 'a': case 'A':
+                    e.preventDefault(); moveClaw('left'); break;
+                case 'ArrowRight': case 'd': case 'D':
+                    e.preventDefault(); moveClaw('right'); break;
+                case ' ':
+                    e.preventDefault(); dropClaw(); break;
+            }
+        });
+    }
+
+    /* ===== BUTTON CONTROLS ===== */
+    function initButtons() {
+        $('#btn-left').addEventListener('click', () => moveClaw('left'));
+        $('#btn-right').addEventListener('click', () => moveClaw('right'));
+        // Up/Down reuse left/right for claw positioning
+        $('#btn-up').addEventListener('click', () => moveClaw('left'));
+        $('#btn-down').addEventListener('click', () => moveClaw('right'));
+        $('#btn-drop').addEventListener('click', () => dropClaw());
+        $('#msg-close').addEventListener('click', () => hideMessage());
+
+        // Sound toggle
+        $('#sound-toggle').addEventListener('click', () => {
+            ensureAudio();
+            soundEnabled = !soundEnabled;
+            Storage.set('sound', soundEnabled);
+            $('#sound-toggle').textContent = soundEnabled ? '🔊' : '🔇';
+        });
+        $('#sound-toggle').textContent = soundEnabled ? '🔊' : '🔇';
+    }
+
+    /* ===== TOUCH SUPPORT ===== */
+    function initTouch() {
+        let touchStartX = 0;
+        const area = $('#claw-area');
+        area.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+        }, { passive: true });
+        area.addEventListener('touchmove', (e) => {
+            const dx = e.touches[0].clientX - touchStartX;
+            if (Math.abs(dx) > 10) {
+                moveClaw(dx > 0 ? 'right' : 'left');
+                touchStartX = e.touches[0].clientX;
+            }
+        }, { passive: true });
+    }
+
+    /* ===== FIREBASE ===== */
+    const FB_URL = 'https://predict-network-ec767-default-rtdb.firebaseio.com';
+    const SLUG = 'toys';
+
+    function fbIncrement(field) {
+        fetch(`${FB_URL}/claw/${SLUG}/stats/${field}.json`)
+            .then(r => r.json())
+            .then(val => {
+                const newVal = (val || 0) + 1;
+                return fetch(`${FB_URL}/claw/${SLUG}/stats/${field}.json`, {
+                    method: 'PUT',
+                    body: JSON.stringify(newVal)
+                });
+            })
+            .catch(() => {});
+    }
+
+    function fbLoadStats() {
+        fetch(`${FB_URL}/claw/${SLUG}/stats.json`)
+            .then(r => r.json())
+            .then(data => {
+                if (!data) return;
+                animateCounter('stat-plays', data.total_plays || 0);
+                animateCounter('stat-prizes', data.prizes_won || 0);
+                animateCounter('stat-legendaries', data.legendaries || 0);
+            })
+            .catch(() => {});
+
+        // Active players (heartbeat-based estimate)
+        fetch(`${FB_URL}/claw/${SLUG}/heartbeat.json`)
+            .then(r => r.json())
+            .then(data => {
+                if (!data) { animateCounter('stat-players', 1); return; }
+                const now = Date.now();
+                const active = Object.values(data).filter(ts => now - ts < 5 * 60 * 1000).length;
+                animateCounter('stat-players', Math.max(active, 1));
+            })
+            .catch(() => animateCounter('stat-players', 1));
+
+        // Register heartbeat
+        const uid = Storage.get('uid', 'u' + Math.random().toString(36).slice(2, 10));
+        Storage.set('uid', uid);
+        function heartbeat() {
+            fetch(`${FB_URL}/claw/${SLUG}/heartbeat/${uid}.json`, {
+                method: 'PUT',
+                body: JSON.stringify(Date.now())
+            }).catch(() => {});
+        }
+        heartbeat();
+        setInterval(heartbeat, 60000);
+    }
+
+    function fbSaveEmail(email) {
+        const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+        fetch(`${FB_URL}/claw/${SLUG}/emails/${id}.json`, {
+            method: 'PUT',
+            body: JSON.stringify({ email: email, ts: Date.now() })
+        }).catch(() => {});
+    }
+
+    function animateCounter(id, target) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const start = parseInt(el.textContent) || 0;
+        if (target <= start) { el.textContent = target.toLocaleString(); return; }
+        const duration = 1000;
+        const step = (target - start) / (duration / 16);
+        let current = start;
+        const tick = () => {
+            current += step;
+            if (current >= target) {
+                el.textContent = target.toLocaleString();
+                return;
+            }
+            el.textContent = Math.floor(current).toLocaleString();
+            requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+    }
+
+    /* ===== RESIZE HANDLER ===== */
+    function initResize() {
+        window.addEventListener('resize', () => {
+            updateClawPosition();
+        });
+    }
+
+    /* ===== INITIALIZE EVERYTHING ===== */
+    function init() {
+        initLoading();
+        populateToyPit();
+        renderPrizeGallery();
+        renderCollection();
+        updateCreditsUI();
+        updateWinsUI();
+        updateClawPosition();
+        initButtons();
+        initKeyboard();
+        initTouch();
+        initDailyBonus();
+        initShare();
+        initFAQ();
+        initEmail();
+        initResize();
+        fbLoadStats();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+</script>
+
+<!-- GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GVNL11PEGP"></script>
+<script>
+window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+gtag('js',new Date());gtag('config','G-GVNL11PEGP');
+</script>
+
+<!-- Clarity -->
+<script>
+(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window,document,"clarity","script","pn0x1z2y3w");
+</script>
+
+<!-- Heartbeat -->
+<script src="https://spunk.codes/heartbeat.js" defer></script>
+
+</body>
+</html>
